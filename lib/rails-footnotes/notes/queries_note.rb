@@ -1,13 +1,13 @@
 module Footnotes
   module Notes
     class QueriesNote < AbstractNote
-      cattr_accessor :alert_db_time, :alert_sql_number, :orm, :ignore_verbose_pg_sql, :instance_writter => false
+      cattr_accessor :alert_db_time, :alert_sql_number, :orm, :ignore_verbose_sql, :instance_writter => false
 
       @@alert_db_time         = 16.0
       @@alert_sql_number      = 8
       @@query_subscriber      = nil
       @@orm                   = [:active_record, :data_mapper]
-      @@ignore_verbose_pg_sql = false
+      @@ignore_verbose_sql = false
 
       def self.start!(controller)
         self.query_subscriber.reset!
@@ -107,8 +107,8 @@ module Footnotes
       end
 
       def should_ignore_event?(event)
-        return false unless QueriesNote.ignore_verbose_pg_sql 
-        event.payload[:sql] =~ /FROM (pg_tables|pg_class|pg_attribute)/
+        return false unless QueriesNote.ignore_verbose_sql
+        event.payload[:sql] =~ /FROM (pg_tables|pg_class|pg_attribute|sqlite_master)/
       end
 
       def sql(event)
